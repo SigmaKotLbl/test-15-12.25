@@ -9,25 +9,30 @@ private:
     int id;
     double salary;
 public:
+// создаем "нулевой" конструктор
     Employee(){
         name = "unknown";
         id = 0;
         salary = 0;
     }
+// создаем "параметрический" конструктор
     Employee(string name_, int id_, double salary_){
         name = name_;
         id = id_;
         salary = salary_;
     }
+// геттеры
     string getName() const{
         return name;
     }
     int getId() const{
         return id;
     }
-    virtual double getSalary() const{
+
+    virtual double getSalary() const{ // virtual для последюущего переопределения в Manager
         return salary;
     }
+// сеттеры
     void setName(const string& newName){
         name = newName;
     }
@@ -38,20 +43,20 @@ public:
         salary = newSalary;
     }
 };
-
+// создали дочерний класс
 class Manager: public Employee{
 private:
     string department;
 public:
-    Manager(string name_, int id_, double salary_, string department_): Employee(name_, id_, salary_), department(department_) {}
-    double getSalary() const override{
-        return Employee::getSalary() * 1.1;
+    Manager(string name_, int id_, double salary_, string department_): Employee(name_, id_, salary_), department(department_) {} // все поля кроме department наследуются от Employee
+    double getSalary() const override{ // переназначаем getSalary (надбавка)
+        return Employee::getSalary() * 1.1; 
     }
     string getDepartment() const{
         return department;
     }
 };
-
+// проверка корректности введенных данных
 bool isValidEmployeeData(const string& name, int id, double salary){
         if (name.empty() != 1 && id > 0 && salary >= 0){
             return true;
@@ -59,23 +64,23 @@ bool isValidEmployeeData(const string& name, int id, double salary){
             return false;
         }
     }
-
+// сохранение в файл (т.к. в условии сказано создать массив из указатаелей, мы подстраиваем функцию под указатели)
 void saveToFile(Employee* employees[], int size, const string& filename){
     ofstream outFile(filename);
 
-    if (outFile.is_open() == 0){
+    if (outFile.is_open() == 0){ // проверяем открыт ли файл
         cerr << "error oppening file!" << filename << endl;
         return;
     }
     for (int i = 0; i < size; i++){
-        if (employees[i] != nullptr){
+        if (employees[i] != nullptr){ // проверяем не является ли указатель нулевым
         outFile << employees[i]->getId() << " "
                 << employees[i]->getName() << " "
                 << employees[i]->getSalary() << endl;
         }
     }
 }  
-
+// небольшая проверка в main =)
 int main(){
     const int size = 4;
 
@@ -95,3 +100,8 @@ int main(){
     saveToFile(array, size, "output");
     return 0;
 }
+
+/*
+В 3 и 4 ячейки массива мы занесли Manager, поэтому их зарплата в output указана с надбавкой:
+
+*/
